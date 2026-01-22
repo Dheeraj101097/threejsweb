@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 
 export function BearModel(props) {
-  // Replace with bear file. Using bmw as placeholder if you lack bear
   const { scene } = useGLTF("/bear.glb");
-  return <primitive object={scene} {...props} />;
+  const ref = useRef();
+
+  useFrame((state, delta) => {
+    if (ref.current) ref.current.rotation.y += delta * 0.2;
+  });
+
+  return (
+    <group {...props} dispose={null}>
+      <group ref={ref} scale={1.6} position={[0, -0.2, 0]}>
+        <primitive object={scene} />
+      </group>
+    </group>
+  );
 }
 useGLTF.preload("/bear.glb");

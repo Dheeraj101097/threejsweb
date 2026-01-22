@@ -104,71 +104,95 @@
 // useGLTF.preload("/model.glb");
 
 // abv is working
-import React, { useRef, useLayoutEffect } from "react";
-import { useGLTF, useScroll } from "@react-three/drei";
+// import React, { useRef, useLayoutEffect } from "react";
+// import { useGLTF, useScroll } from "@react-three/drei";
+// import { useFrame } from "@react-three/fiber";
+// import * as THREE from "three";
+
+// export function Model({ isDarkMode, ...props }) {
+//   const { nodes, materials } = useGLTF("/model.glb");
+//   const group = useRef();
+//   const scroll = useScroll();
+
+//   useLayoutEffect(() => {
+//     if (materials.Moon) {
+//       materials.Moon.toneMapped = false;
+//       materials.Moon.transparent = true;
+//     }
+//   }, [materials]);
+
+//   useFrame((state, delta) => {
+//     const r = scroll.offset;
+
+//     // 1. Rotation (Spins as it rises)
+//     if (group.current) {
+//       group.current.rotation.y = -r * Math.PI * 1;
+//     }
+
+//     // 2. Glow Effect
+//     if (materials.Moon) {
+//       // Dark Mode: Bright Orange Glow
+//       // Light Mode: Subtle Warm Glow
+//       const maxIntensity = isDarkMode ? 5 : 2;
+//       materials.Moon.emissiveIntensity = THREE.MathUtils.lerp(
+//         0,
+//         maxIntensity,
+//         r,
+//       );
+
+//       // Color Shift
+//       const targetColor = isDarkMode
+//         ? new THREE.Color("#ffaa00")
+//         : new THREE.Color("#ffddaa");
+//       materials.Moon.emissive.lerp(targetColor, 0.1);
+//     }
+//   });
+
+//   return (
+//     <group ref={group} {...props} dispose={null}>
+//       {/* Structure based on your working code */}
+//       <group rotation={[-Math.PI / 2, 0, 0]} scale={0.1}>
+//         <group rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+//           <group rotation={[-Math.PI / 2, 0, 0]} scale={100}>
+//             <mesh
+//               castShadow
+//               receiveShadow
+//               geometry={nodes.Wood_Cage_Wood_0.geometry}
+//               material={materials.Wood}
+//             />
+//             <mesh
+//               geometry={nodes.Moon_Moon_0.geometry}
+//               material={materials.Moon}
+//             />
+//           </group>
+//         </group>
+//       </group>
+//     </group>
+//   );
+// }
+
+// useGLTF.preload("/model.glb");
+// this one put for moon in hero below for festure sec
+import React, { useRef } from "react";
+import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import * as THREE from "three";
 
-export function Model({ isDarkMode, ...props }) {
-  const { nodes, materials } = useGLTF("/model.glb");
-  const group = useRef();
-  const scroll = useScroll();
-
-  useLayoutEffect(() => {
-    if (materials.Moon) {
-      materials.Moon.toneMapped = false;
-      materials.Moon.transparent = true;
-    }
-  }, [materials]);
+export function LampModel(props) {
+  // Make sure this matches your file name in public/
+  const { scene } = useGLTF("/model.glb");
+  const ref = useRef();
 
   useFrame((state, delta) => {
-    const r = scroll.offset;
-
-    // 1. Rotation (Spins as it rises)
-    if (group.current) {
-      group.current.rotation.y = -r * Math.PI * 1;
-    }
-
-    // 2. Glow Effect
-    if (materials.Moon) {
-      // Dark Mode: Bright Orange Glow
-      // Light Mode: Subtle Warm Glow
-      const maxIntensity = isDarkMode ? 5 : 2;
-      materials.Moon.emissiveIntensity = THREE.MathUtils.lerp(
-        0,
-        maxIntensity,
-        r,
-      );
-
-      // Color Shift
-      const targetColor = isDarkMode
-        ? new THREE.Color("#ffaa00")
-        : new THREE.Color("#ffddaa");
-      materials.Moon.emissive.lerp(targetColor, 0.1);
-    }
+    if (ref.current) ref.current.rotation.y += delta * 0.1;
   });
 
   return (
-    <group ref={group} {...props} dispose={null}>
-      {/* Structure based on your working code */}
-      <group rotation={[-Math.PI / 2, 0, 0]} scale={0.1}>
-        <group rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
-          <group rotation={[-Math.PI / 2, 0, 0]} scale={100}>
-            <mesh
-              castShadow
-              receiveShadow
-              geometry={nodes.Wood_Cage_Wood_0.geometry}
-              material={materials.Wood}
-            />
-            <mesh
-              geometry={nodes.Moon_Moon_0.geometry}
-              material={materials.Moon}
-            />
-          </group>
-        </group>
+    <group {...props} dispose={null}>
+      {/* Adjusted scale/position to fit the pedestal */}
+      <group ref={ref} scale={5} position={[0, -0.3, 0]}>
+        <primitive object={scene} />
       </group>
     </group>
   );
 }
-
 useGLTF.preload("/model.glb");
